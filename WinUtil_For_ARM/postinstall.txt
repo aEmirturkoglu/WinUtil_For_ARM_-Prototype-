@@ -1,0 +1,18 @@
+# ── Post-Install Auto-Run Tasks for Elite X Devices ───────────────────────
+#===============================================================================
+
+# Add TPM blind handler to boot sequence
+Add-Content -Path "\$env:SystemRoot\StartUp\WinUtil_TPM_Bypass.lnk" `
+    -Value "powershell.exe -NoProfile -ExecutionPolicy Bypass `
+            -File '\$env:System32\WinUtil\tpm_mock.dll'"
+
+# Create registry key for persistent TPM blind mode
+New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Services\FtdiSerialService\Parameters\MockTPMData" | Out-Null
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\FtdiSerialService\Parameters\MockTPMData" `
+                 -Name "OwnerInfo" -Value "EliteX-Arm64-Mock v2.0.8315.7901" -Force 2>$null
+
+# Disable X86 fallback (persistent)
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" `
+                 -Name "PROCESSOR_ARCHITECTURE" -Value "ARM64" -Force 2>$null
+
+Log "Post-install tasks applied." -ForegroundColor Green
