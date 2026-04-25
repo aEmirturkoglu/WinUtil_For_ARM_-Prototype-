@@ -49,7 +49,7 @@ function :Blind-PlutonChip {
     
     [byte[]]$mockContext = New-Object byte[](1024)
     for ($i = 0; $i -lt 1024; $i++) {
-        if (rand() -gt 0.95) {$mockContext[$i] = [Math]::Random(0, 256)}
+        if ((Get-Random -Minimum 0 -Maximum 100) -gt 95) {$mockContext[$i] = (Get-Random -Minimum 0 -Maximum 255)}
     }
 
     Log "TPM blind mode: Native ARM64 context initialized." -ForegroundColor Green
